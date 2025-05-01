@@ -35,7 +35,8 @@ func runServer(r *gin.Engine, db *gorm.DB, h handlers.Store) {
 				service.Use(AdminOnly())
 				service.POST("/", h.ServiceHandler.CreateService)
 				service.PUT("/:id", h.ServiceHandler.UpdateService)
-				service.PATCH("/:id/toggle", h.ServiceHandler.ToggleService)
+				service.PUT("/assign-vendor", h.ServiceHandler.AssignVendor)
+				service.PATCH("/toggle", h.ServiceHandler.ToggleService)
 			}
 
 			vendor := api.Group("/vendors")
@@ -46,6 +47,7 @@ func runServer(r *gin.Engine, db *gorm.DB, h handlers.Store) {
 
 			booking := api.Group("/bookings")
 			{
+				booking.Use(CustomerOnly())
 				booking.POST("/", h.BookingHandler.CreateBooking)
 				booking.GET("/", h.BookingHandler.ListBookings)
 			}

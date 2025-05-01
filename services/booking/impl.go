@@ -17,12 +17,14 @@ func NewBookingService(r booking.BookingRepository) BookingService {
 
 func (s *bookingService) CreateBooking(booking *model.Booking) (*model.Booking, error) {
 	hour := booking.BookingTime.Hour()
-	if hour < 9 || hour >= 17 {
-		return nil, errors.New("booking must be between 9 AM and 5 PM")
+
+
+	if hour < 9 || hour > 16  || booking.BookingTime.Minute() != 0 ||  booking.BookingTime.Second() != 0 {
+		return nil, errors.New("booking must be between 9 AM and 5 PM in 1-hour intervals ")
 	}
 
-	if _, err := s.repo.FindOverlappingBooking(booking.VendorID, booking.BookingTime); err == nil {
-		return nil, errors.New("overlapping booking detected")
+	if valid, _ := s.repo.FindOverlappingBooking(booking); valid {
+		return nil, errors.New("slot already booked")
 	}
 
 	booking.Status = "pending"

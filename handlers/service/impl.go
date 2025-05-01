@@ -38,7 +38,10 @@ func (h *ServiceHandler) CreateService(c *gin.Context) {
 	c.JSON(http.StatusCreated, service)
 }
 
-
+type ServiceQuery struct {
+	ServiceID uint `form:"service_id"`
+	VendorID  uint `form:"vendor_id"`
+}
 // @Summary      Update a service
 // @Description  Admin-only endpoint to update a service by ID
 // @Tags         services
@@ -50,19 +53,36 @@ func (h *ServiceHandler) CreateService(c *gin.Context) {
 // @Failure      400      {object}  ErrorResponse
 // @Router       /api/services/{id} [put]
 func (h *ServiceHandler) UpdateService(c *gin.Context) {
-	id := c.Param("id")
+
+	
 	var service model.Service
 	if err := c.ShouldBindJSON(&service); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	id := c.Param("id")	
 
-	updated, err := h.service.UpdateService(id, &service)
-	if err != nil {
+	if err := h.service.UpdateService(&service, id); err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Service not found"})
 		return
 	}
-	c.JSON(http.StatusOK, updated)
+	c.JSON(http.StatusOK, service)
+}
+
+
+func (h *ServiceHandler) AssignVendor(c *gin.Context) {
+
+	
+	var service model.LinkServiceVendor
+	if err := c.ShouldBindJSON(&service); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.service.AssignVendor(&service); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, service)
 }
 
 
@@ -76,8 +96,12 @@ func (h *ServiceHandler) UpdateService(c *gin.Context) {
 // @Failure      400  {object}  ErrorResponse
 // @Router       /api/services/{id}/toggle [patch]
 func (h *ServiceHandler) ToggleService(c *gin.Context) {
-	id := c.Param("id")
-	updated, err := h.service.ToggleService(id)
+	var service model.ServiceVendor
+	if err := c.ShouldBindJSON(&service); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	updated, err := h.service.ToggleService(service)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Service not found"})
 		return

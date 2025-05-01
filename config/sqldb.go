@@ -39,6 +39,7 @@ func SetupDatabase() *gorm.DB {
     &model.Vendor{},
     &model.Service{},
     &model.Booking{},
+	&model.LinkServiceVendor{},
 )
 if err != nil {
     log.Fatal("Failed auto migration:", err)

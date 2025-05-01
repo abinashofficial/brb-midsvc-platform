@@ -54,10 +54,11 @@ GET	    /health	    Check DB health
 
 🔧 Services (Admin Only)
 
-Method	Endpoint	            Description
-POST	/services/	            Create a service
-PUT	    /services/:id	        Update a service
-PATCH	/services/:id/toggle	Toggle service status
+Method	Endpoint	                Description
+POST	/services/	                Create a service
+PUT	    /services/:id		        Update a service 
+PUT	    /services/assign-vendor	    Link service to vendor
+PATCH	/services/toggle	        Toggle service status
 
 🏢 Vendors (Admin Only)
 

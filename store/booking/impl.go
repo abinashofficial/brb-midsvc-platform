@@ -2,7 +2,6 @@ package booking
 
 import (
 	"brb-midsvc-platform/model"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -19,13 +18,12 @@ func (r *bookingRepository) CreateBooking(booking *model.Booking) error {
 	return r.db.Create(booking).Error
 }
 
-func (r *bookingRepository) FindOverlappingBooking(vendorID uint, bookingTime time.Time) (*model.Booking, error) {
-	var existing model.Booking
-	err := r.db.Where("vendor_id = ? AND booking_time = ?", vendorID, bookingTime).First(&existing).Error
-	if err != nil {
-		return nil, err
-	}
-	return &existing, nil
+func (r *bookingRepository) FindOverlappingBooking(booking *model.Booking)  (bool, error){
+	var count int64
+	err := r.db.Model(&model.Booking{}).
+		Where("service_id = ? AND vendor_id = ? AND booking_time = ?", booking.ServiceID, booking.VendorID, booking.BookingTime).
+		Count(&count).Error
+	return  count != 0, err
 }
 
 func (r *bookingRepository) ListBookings(offset, limit int) ([]model.Booking, error) {

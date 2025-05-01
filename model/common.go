@@ -4,19 +4,31 @@ import ("gorm.io/gorm"
 "time")
 
 
-type Service struct {
+type LinkServiceVendor struct {
 	gorm.Model
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Price       float64 `json:"price"`
 	Active      bool    `json:"active"`
 	VendorID    uint    `json:"vendor_id"`
+	ServiceID   uint  `json:"service_id"`
+}
+
+
+type Service struct {
+	gorm.Model
+	ID 		uint   `json:"ID"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Price       float64 `json:"price"`
+	LinkServiceVendor []LinkServiceVendor `gorm:"foreignKey:ServiceID"`
+
 }
 
 type Vendor struct {
 	gorm.Model
 	Name     string    `json:"name"`
-	Services []Service `gorm:"foreignKey:VendorID"`
+	LinkServiceVendor []LinkServiceVendor `gorm:"foreignKey:VendorID"`
 }
 
 type Booking struct {
@@ -43,3 +55,9 @@ type TapContext struct {
 type ErrorResponse struct {
     Message string `json:"message" example:"Bad request"`
 }
+
+
+type ServiceVendor struct {
+	VendorID    uint    `json:"vendor_id"`
+	ServiceID    uint    `json:"service_id"`
+	}

@@ -8,4 +8,5 @@ type Handler interface {
 	CreateService(c *gin.Context)
 	UpdateService(c *gin.Context)
 	ToggleService(c *gin.Context)
+	AssignVendor(c *gin.Context)
 }
